@@ -24,8 +24,10 @@
     </div>
     <div class="search">
       <input id="q" type="search" autocomplete="off" autocapitalize="off" spellcheck="false"
-             placeholder="輸入代碼、中文、英文縮寫（如 TURP、DJ、膀胱鏡）">
+             enterkeyhint="search" role="combobox" aria-autocomplete="list" aria-controls="suggest"
+             aria-expanded="false" placeholder="代碼、中文或縮寫：770、膀胱、TURP">
       <button type="button" id="clear" aria-label="清除">✕</button>
+      <ul id="suggest" class="suggest" role="listbox" hidden></ul>
     </div>
     <div id="cats" class="cats" aria-label="分類"></div>
   </header>

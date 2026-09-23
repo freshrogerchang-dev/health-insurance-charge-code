@@ -202,7 +202,72 @@
     }
     statusEl.textContent = msg;
     render();
+    suggest();
   }
+
+  // ---------- 輸入時的下拉建議 ----------
+  var sugEl = $('suggest'), sugList = [], sugIdx = -1, SUG_MAX = 8;
+  function hideSug() {
+    sugEl.hidden = true; sugIdx = -1;
+    qEl.setAttribute('aria-expanded', 'false');
+  }
+  function suggest() {
+    var q = qEl.value.trim();
+    if (!q || document.activeElement !== qEl) { hideSug(); return; }
+    var seen = {};
+    sugList = state.results.slice(0, SUG_MAX).map(function (it) { seen[it.code] = 1; return { it: it, other: false }; });
+    if (sugList.length < SUG_MAX && state.scope !== 'all') {
+      // 目前範圍不夠時，從全部代碼補上
+      search(getAll(), q).list.some(function (it) {
+        if (!seen[it.code]) sugList.push({ it: it, other: true });
+        return sugList.length >= SUG_MAX;
+      });
+    }
+    var raws = q.split(/\s+/);
+    var html = sugList.map(function (s, i) {
+      return '<li role="option" data-i="' + i + '"' + (i === sugIdx ? ' class="active"' : '') + '>' +
+        '<span class="s-code">' + highlight(s.it.code, raws) + '</span>' +
+        '<span class="s-name">' + highlight(s.it.name, raws) + '</span>' +
+        (s.other ? '<span class="s-tag">全部</span>' : '') + '</li>';
+    }).join('');
+    if (!sugList.length) html = '<li class="s-more">查無相符代碼</li>';
+    else if (state.results.length > SUG_MAX) html += '<li class="s-more">共 ' + state.results.length + ' 項，按搜尋看全部</li>';
+    sugEl.innerHTML = html;
+    sugEl.hidden = false;
+    qEl.setAttribute('aria-expanded', 'true');
+  }
+  function pickSug(i) {
+    var s = sugList[i];
+    if (!s) return;
+    qEl.value = s.it.code;
+    if (s.other) state.cat = '';
+    hideSug();
+    qEl.blur();
+    if (s.other && state.scope !== 'all') setScope('all'); else run();
+  }
+  // 用 mousedown 避免輸入框先失焦把選單關掉
+  sugEl.addEventListener('mousedown', function (e) {
+    var li = e.target.closest('li[data-i]');
+    e.preventDefault();
+    if (li) pickSug(+li.getAttribute('data-i'));
+  });
+  qEl.addEventListener('keydown', function (e) {
+    if (e.isComposing) return;
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      if (sugEl.hidden || !sugList.length) return;
+      e.preventDefault();
+      var n = sugList.length;
+      sugIdx = e.key === 'ArrowDown' ? (sugIdx + 1) % n : (sugIdx - 1 + n) % n;
+      suggest();
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (sugIdx >= 0) pickSug(sugIdx); else { hideSug(); qEl.blur(); }
+    } else if (e.key === 'Escape') {
+      hideSug();
+    }
+  });
+  qEl.addEventListener('focus', suggest);
+  qEl.addEventListener('blur', function () { setTimeout(hideSug, 150); });
 
   function render() {
     var raws = qEl.value.trim().split(/\s+/).filter(Boolean);
@@ -265,6 +330,7 @@
   // ---------- 事件 ----------
   var debounce;
   qEl.addEventListener('input', function () {
+    sugIdx = -1;
     clearTimeout(debounce);
     debounce = setTimeout(run, state.scope === 'all' ? 120 : 30);
   });

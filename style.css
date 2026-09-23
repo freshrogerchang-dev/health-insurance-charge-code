@@ -28,7 +28,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font: 16px/1.5 system-ui, -apple-system, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+  font: 17px/1.5 system-ui, -apple-system, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
 }
 .top {
   position: sticky; top: 0; z-index: 5;
@@ -37,31 +37,49 @@ body {
   border-bottom: 1px solid var(--line);
 }
 .title-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-h1 { font-size: 1.15rem; margin: 0; color: var(--accent); white-space: nowrap; }
+h1 { font-size: 1.35rem; margin: 0; color: var(--accent); white-space: nowrap; }
 .scope { display: flex; background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 2px; }
 .scope button {
-  border: 0; background: none; color: var(--muted); font: inherit; font-size: .85rem;
-  padding: 4px 10px; border-radius: 999px; cursor: pointer;
+  border: 0; background: none; color: var(--muted); font: inherit; font-size: .95rem;
+  padding: 6px 12px; border-radius: 999px; cursor: pointer;
 }
 .scope button.on { background: var(--accent); color: #fff; }
-.search { position: relative; margin-top: 8px; }
+.search { position: relative; margin-top: 10px; }
 .search input {
-  width: 100%; font: inherit; font-size: 1.05rem;
-  padding: 10px 40px 10px 12px;
-  border: 1.5px solid var(--line); border-radius: 10px;
+  width: 100%; font: inherit; font-size: 1.4rem; line-height: 1.3;
+  padding: 14px 52px 14px 16px;
+  border: 2px solid var(--line); border-radius: 14px;
   background: var(--card); color: var(--text);
 }
 .search input:focus { outline: none; border-color: var(--accent); }
 .search input::-webkit-search-cancel-button { display: none; }
 #clear {
   position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
-  border: 0; background: none; color: var(--muted); font-size: 1rem; padding: 6px 8px; cursor: pointer;
+  border: 0; background: none; color: var(--muted); font-size: 1.3rem; padding: 8px 12px; cursor: pointer;
 }
+.suggest {
+  position: absolute; left: 0; right: 0; top: calc(100% + 4px); z-index: 10;
+  list-style: none; margin: 0; padding: 4px 0;
+  max-height: 60vh; overflow-y: auto;
+  background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .18);
+}
+.suggest li {
+  display: flex; align-items: baseline; gap: 10px;
+  padding: 11px 14px; font-size: 1.1rem; cursor: pointer;
+  border-bottom: 1px solid var(--line);
+}
+.suggest li:last-child { border-bottom: 0; }
+.suggest li.active, .suggest li:hover { background: var(--accent-soft); }
+.suggest .s-code { flex: none; font: 600 1.1rem ui-monospace, "SF Mono", Menlo, Consolas, monospace; color: var(--accent); }
+.suggest .s-name { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.suggest .s-tag { flex: none; font-size: .75rem; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 0 6px; }
+.suggest .s-more { justify-content: center; color: var(--muted); font-size: .9rem; cursor: default; }
 .cats { display: flex; gap: 6px; overflow-x: auto; padding: 8px 0 2px; scrollbar-width: none; }
 .cats::-webkit-scrollbar { display: none; }
 .cats button {
   flex: none; border: 1px solid var(--line); background: var(--card); color: var(--text);
-  font: inherit; font-size: .82rem; padding: 3px 10px; border-radius: 999px; cursor: pointer;
+  font: inherit; font-size: .9rem; padding: 5px 12px; border-radius: 999px; cursor: pointer;
 }
 .cats button.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 600; }
 main { padding: 4px 16px 16px; max-width: 860px; margin: 0 auto; }
@@ -73,11 +91,11 @@ main { padding: 4px 16px 16px; max-width: 860px; margin: 0 auto; }
 }
 .row1 { display: flex; align-items: flex-start; gap: 10px; }
 .code {
-  flex: none; font: 600 1rem/1.4 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  flex: none; font: 600 1.1rem/1.4 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   color: var(--accent); background: var(--accent-soft);
   border: 0; border-radius: 6px; padding: 2px 7px; cursor: pointer;
 }
-.name { flex: 1; min-width: 0; font-weight: 500; overflow-wrap: anywhere; }
+.name { flex: 1; min-width: 0; font-weight: 500; font-size: 1.05rem; overflow-wrap: anywhere; }
 .star { flex: none; border: 0; background: none; font-size: 1.15rem; line-height: 1; color: var(--line); cursor: pointer; padding: 2px; }
 .star.on { color: var(--star); }
 .sub { margin-top: 4px; font-size: .8rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 10px; }
