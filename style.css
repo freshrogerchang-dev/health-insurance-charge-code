@@ -193,6 +193,7 @@ main { padding: 6px 16px 16px; max-width: 860px; margin: 0 auto; }
   padding: 2px 8px; border-radius: 999px; letter-spacing: .01em;
 }
 .tag.cat { background: var(--line-soft); color: var(--muted); font-weight: 600; }
+.tag.pts { background: var(--accent-soft); color: var(--accent-2); }
 .tag.grp-surgery { background: var(--c-surgery-soft); color: var(--c-surgery); }
 .tag.grp-procedure { background: var(--c-procedure-soft); color: var(--c-procedure); }
 .tag.grp-exam { background: var(--c-exam-soft); color: var(--c-exam); }

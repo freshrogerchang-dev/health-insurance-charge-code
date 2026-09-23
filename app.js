@@ -43,10 +43,11 @@
 
   // ---------- 建立索引 ----------
   var uroByCode = {};
-  function makeItem(code, name, note, cat, alias, group, tip) {
+  function makeItem(code, name, note, cat, alias, group, tip, points) {
     var it = {
       code: code, name: name, note: note || '', cat: cat || '',
-      alias: alias || '', group: group || '', tip: tip || ''
+      alias: alias || '', group: group || '', tip: tip || '',
+      points: (typeof points === 'number') ? points : null
     };
     it.kCode = code.toLowerCase();
     it.kName = canon(name);
@@ -57,7 +58,7 @@
     return it;
   }
   var uroItems = URO.items.map(function (u) {
-    var it = makeItem(u.code, u.name, u.note, u.cat, u.alias, u.group, u.tip);
+    var it = makeItem(u.code, u.name, u.note, u.cat, u.alias, u.group, u.tip, u.points);
     uroByCode[u.code] = it;
     return it;
   });
@@ -307,6 +308,7 @@
         var sub = '';
         if (it.group) sub += '<span class="tag grp-' + slug + '">' + GROUP_ICON[it.group] + ' ' + esc(it.group) + '</span>';
         if (it.cat) sub += '<span class="tag cat">' + esc(it.cat) + '</span>';
+        if (it.points != null) sub += '<span class="tag pts" title="115.09.01 生效版支付點數">💰 ' + it.points + ' 點</span>';
         if (it.alias) sub += '<span class="alias">' + highlight(it.alias, raws) + '</span>';
         var tip = it.tip ? '<div class="tip"><p class="tip-head">⚠ 申報提醒</p><p>' +
           highlight(it.tip, raws) + '</p><p class="tip-disclaimer">此提醒為整理者歸納，非健保署逐字' +
