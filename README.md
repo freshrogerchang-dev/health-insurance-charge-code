@@ -18,6 +18,10 @@
 
 ## 使用方式
 
+**線上版（GitHub Pages）**：https://freshrogerchang-dev.github.io/health-insurance-charge-code/
+手機用 Safari／Chrome 開啟後選「加入主畫面」，就能像 App 一樣使用，也支援離線。
+
+
 - 直接用瀏覽器打開 `index.html` 就能使用（不需要網路、不需要安裝）
 - 放到任何靜態網站空間（例如 GitHub Pages）後用手機開啟，選「加入主畫面」即可當 App 使用，並支援離線
 - 整理好的清單另外輸出成：
