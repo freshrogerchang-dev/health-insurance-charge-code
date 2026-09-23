@@ -4,7 +4,7 @@
   var URO = window.NHI_URO;
   var ALL = window.NHI_ALL;
   var META = window.NHI_META || {};
-  var PAGE = 50;
+  var PAGE = 20;
 
   // ---------- 儲存（隱私模式下 localStorage 可能無法使用） ----------
   function load(key, fallback) {

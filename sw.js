@@ -1,5 +1,5 @@
 // 離線快取：資料更新時請修改 VERSION
-var VERSION = 'nhi-v2';
+var VERSION = 'nhi-v3';
 var FILES = ['./', 'index.html', 'style.css', 'app.js', 'data/urology.js', 'data/all-codes.js',
   'manifest.webmanifest', 'icon.svg'];
 

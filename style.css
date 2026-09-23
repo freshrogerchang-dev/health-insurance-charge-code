@@ -109,6 +109,7 @@ mark { background: var(--mark); color: inherit; border-radius: 2px; }
   display: block; margin: 12px auto; font: inherit; border: 1px solid var(--line);
   background: var(--card); color: var(--accent); border-radius: 8px; padding: 8px 18px; cursor: pointer;
 }
+.more[hidden] { display: none; }
 .empty { text-align: center; color: var(--muted); padding: 32px 0; }
 .foot { color: var(--muted); font-size: .78rem; text-align: center; padding: 8px 16px calc(24px + env(safe-area-inset-bottom)); }
 .foot a { color: var(--accent); }
