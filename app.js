@@ -37,10 +37,17 @@
     return s;
   }
 
+  // 大分類（手術／處置／檢查／檢驗）顏色代碼，用於徽章與分頁樣式
+  var GROUP_SLUG = { '手術': 'surgery', '處置': 'procedure', '檢查': 'exam', '檢驗': 'lab' };
+  var GROUP_ICON = { '手術': '🔪', '處置': '🩺', '檢查': '🔍', '檢驗': '🧪' };
+
   // ---------- 建立索引 ----------
   var uroByCode = {};
-  function makeItem(code, name, note, cat, alias) {
-    var it = { code: code, name: name, note: note || '', cat: cat || '', alias: alias || '' };
+  function makeItem(code, name, note, cat, alias, group, tip) {
+    var it = {
+      code: code, name: name, note: note || '', cat: cat || '',
+      alias: alias || '', group: group || '', tip: tip || ''
+    };
     it.kCode = code.toLowerCase();
     it.kName = canon(name);
     it.kAlias = canon(alias);
@@ -50,10 +57,12 @@
     return it;
   }
   var uroItems = URO.items.map(function (u) {
-    var it = makeItem(u.code, u.name, u.note, u.cat, u.alias);
+    var it = makeItem(u.code, u.name, u.note, u.cat, u.alias, u.group, u.tip);
     uroByCode[u.code] = it;
     return it;
   });
+  var catGroup = {};
+  URO.categories.forEach(function (c) { catGroup[c.name] = c.group; });
   var allItems = null;
   function getAll() {
     if (!allItems) {
@@ -135,8 +144,9 @@
 
   // ---------- 畫面 ----------
   var $ = function (id) { return document.getElementById(id); };
-  var qEl = $('q'), listEl = $('list'), statusEl = $('status'), moreEl = $('more'), catsEl = $('cats');
-  var state = { scope: load('scope', 'uro'), cat: '', shown: PAGE, results: [] };
+  var qEl = $('q'), listEl = $('list'), statusEl = $('status'), moreEl = $('more'),
+      catsEl = $('cats'), groupsEl = $('groups');
+  var state = { scope: load('scope', 'uro'), group: '', cat: '', shown: PAGE, results: [] };
   var favs = load('favs', []);
 
   function esc(s) {
@@ -163,10 +173,25 @@
     } catch (e) { return html; }
   }
 
+  function renderGroups() {
+    if (state.scope === 'all') { groupsEl.hidden = true; return; }
+    groupsEl.hidden = false;
+    var groups = [''].concat(URO.groups);
+    groupsEl.innerHTML = groups.map(function (g) {
+      var slug = GROUP_SLUG[g] || 'any';
+      return '<button type="button" class="grp-' + slug + (g === state.group ? ' on' : '') +
+        '" data-group="' + esc(g) + '">' +
+        (g ? GROUP_ICON[g] + ' ' + esc(g) : '全部') + '</button>';
+    }).join('');
+  }
+
   function renderCats() {
     if (state.scope === 'all') { catsEl.hidden = true; return; }
     catsEl.hidden = false;
-    var cats = [''].concat(URO.categories);
+    var names = URO.categories
+      .filter(function (c) { return !state.group || c.group === state.group; })
+      .map(function (c) { return c.name; });
+    var cats = [''].concat(names);
     catsEl.innerHTML = cats.map(function (c) {
       return '<button type="button" data-cat="' + esc(c) + '"' + (c === state.cat ? ' class="on"' : '') + '>' +
         (c ? esc(c) : '全部分類') + '</button>';
@@ -181,6 +206,7 @@
       getAll().forEach(function (it) { idx[it.code] = it; });
       items = favs.map(function (c) { return idx[c]; }).filter(Boolean);
     }
+    if (state.group) items = items.filter(function (it) { return it.group === state.group; });
     if (state.cat) items = items.filter(function (it) { return it.cat === state.cat; });
     return items;
   }
@@ -277,16 +303,22 @@
     } else {
       listEl.innerHTML = slice.map(function (it) {
         var fav = favs.indexOf(it.code) !== -1;
+        var slug = GROUP_SLUG[it.group] || '';
         var sub = '';
-        if (it.cat) sub += '<span class="tag">' + esc(it.cat) + '</span>';
+        if (it.group) sub += '<span class="tag grp-' + slug + '">' + GROUP_ICON[it.group] + ' ' + esc(it.group) + '</span>';
+        if (it.cat) sub += '<span class="tag cat">' + esc(it.cat) + '</span>';
         if (it.alias) sub += '<span class="alias">' + highlight(it.alias, raws) + '</span>';
-        return '<li class="item">' +
+        var tip = it.tip ? '<div class="tip"><p class="tip-head">⚠ 申報提醒</p><p>' +
+          highlight(it.tip, raws) + '</p><p class="tip-disclaimer">此提醒為整理者歸納，非健保署逐字' +
+          '公告，請以當年度支付標準通則及院內審查為準。</p></div>' : '';
+        return '<li class="item' + (slug ? ' item-' + slug : '') + '">' +
           '<div class="row1">' +
           '<button type="button" class="code" data-copy="' + esc(it.code) + '" title="複製代碼">' + highlight(it.code, raws) + '</button>' +
           '<div class="name">' + highlight(it.name, raws) + '</div>' +
           '<button type="button" class="star' + (fav ? ' on' : '') + '" data-fav="' + esc(it.code) + '" aria-label="' + (fav ? '移除常用' : '加入常用') + '">' + (fav ? '★' : '☆') + '</button>' +
           '</div>' +
           (sub ? '<div class="sub">' + sub + '</div>' : '') +
+          tip +
           (it.note ? '<details><summary>支付規範</summary><p>' + highlight(it.note, raws) + '</p></details>' : '') +
           '</li>';
       }).join('');
@@ -318,11 +350,13 @@
 
   function setScope(s) {
     state.scope = s;
+    state.group = '';
     state.cat = '';
     save('scope', s);
     Array.prototype.forEach.call(document.querySelectorAll('.scope button'), function (b) {
       b.classList.toggle('on', b.getAttribute('data-scope') === s);
     });
+    renderGroups();
     renderCats();
     run();
   }
@@ -338,6 +372,15 @@
   document.querySelector('.scope').addEventListener('click', function (e) {
     var b = e.target.closest('button[data-scope]');
     if (b) setScope(b.getAttribute('data-scope'));
+  });
+  groupsEl.addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-group]');
+    if (!b) return;
+    state.group = b.getAttribute('data-group');
+    state.cat = '';
+    renderGroups();
+    renderCats();
+    run();
   });
   catsEl.addEventListener('click', function (e) {
     var b = e.target.closest('button[data-cat]');

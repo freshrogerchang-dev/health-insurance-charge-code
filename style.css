@@ -1,122 +1,243 @@
 :root {
-  --bg: #f5f7f7;
+  --bg: #f4f6f7;
+  --bg-grad: linear-gradient(180deg, #eef6f5 0%, #f4f6f7 220px);
   --card: #ffffff;
-  --text: #1c2526;
-  --muted: #5d6b6d;
-  --line: #dde4e5;
-  --accent: #0f6e6e;
-  --accent-soft: #e0f0ef;
-  --mark: #ffe58a;
-  --star: #e0a100;
+  --text: #1b2426;
+  --muted: #64757a;
+  --line: #e1e7e8;
+  --line-soft: #edf1f2;
+  --accent: #0e7c74;
+  --accent-2: #0a5a56;
+  --accent-soft: #dff3f0;
+  --mark: #ffe08a;
+  --star: #dd9c00;
+  --shadow: 0 1px 2px rgba(19, 38, 37, .04), 0 6px 16px -8px rgba(19, 38, 37, .12);
+  --shadow-lg: 0 10px 30px -10px rgba(19, 38, 37, .22);
+  --radius: 16px;
+
+  /* 大分類色系：手術／處置／檢查／檢驗 */
+  --c-surgery: #b3441e;
+  --c-surgery-soft: #fbe9e0;
+  --c-procedure: #0e7c74;
+  --c-procedure-soft: #dff3f0;
+  --c-exam: #5b4fc4;
+  --c-exam-soft: #e9e6fb;
+  --c-lab: #a3791a;
+  --c-lab-soft: #f7ecd2;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #121718;
-    --card: #1b2223;
-    --text: #e6eced;
-    --muted: #9aa9ab;
-    --line: #2c3637;
-    --accent: #4fc1bd;
-    --accent-soft: #1d3534;
-    --mark: #6b5a12;
+    --bg: #10161a;
+    --bg-grad: linear-gradient(180deg, #14231f 0%, #10161a 260px);
+    --card: #1a2226;
+    --text: #eaf1f0;
+    --muted: #93a3a4;
+    --line: #2b363a;
+    --line-soft: #212a2e;
+    --accent: #45c2b6;
+    --accent-2: #7ee0d4;
+    --accent-soft: #163330;
+    --mark: #6e5a17;
     --star: #f2c14e;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 20px -8px rgba(0, 0, 0, .5);
+    --shadow-lg: 0 14px 34px -12px rgba(0, 0, 0, .6);
+
+    --c-surgery: #ef8a63;
+    --c-surgery-soft: #35211a;
+    --c-procedure: #45c2b6;
+    --c-procedure-soft: #16302d;
+    --c-exam: #a79cf0;
+    --c-exam-soft: #251f3d;
+    --c-lab: #e0bb64;
+    --c-lab-soft: #382d15;
   }
 }
-* { box-sizing: border-box; }
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
-  background: var(--bg);
+  background: var(--bg) var(--bg-grad);
+  background-attachment: fixed;
   color: var(--text);
-  font: 17px/1.5 system-ui, -apple-system, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+  font: 17px/1.55 -apple-system, "PingFang TC", "Noto Sans TC", system-ui, "Microsoft JhengHei", sans-serif;
 }
+::selection { background: var(--mark); }
+
+/* ---------- 標題列 ---------- */
 .top {
   position: sticky; top: 0; z-index: 5;
-  background: var(--bg);
-  padding: calc(10px + env(safe-area-inset-top)) 16px 8px;
+  background: rgba(244, 246, 247, .86);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  padding: calc(12px + env(safe-area-inset-top)) 16px 10px;
   border-bottom: 1px solid var(--line);
 }
-.title-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-h1 { font-size: 1.35rem; margin: 0; color: var(--accent); white-space: nowrap; }
-.scope { display: flex; background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 2px; }
+@media (prefers-color-scheme: dark) {
+  .top { background: rgba(16, 22, 26, .82); }
+}
+.title-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+h1 {
+  font-size: 1.3rem; font-weight: 700; margin: 0; color: var(--accent-2);
+  white-space: nowrap; display: flex; align-items: center; gap: 6px; letter-spacing: -.01em;
+}
+@media (prefers-color-scheme: dark) { h1 { color: var(--accent); } }
+.logo { font-size: 1.25em; filter: saturate(1.1); }
+
+.scope { display: flex; background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 3px; box-shadow: var(--shadow); }
 .scope button {
-  border: 0; background: none; color: var(--muted); font: inherit; font-size: .95rem;
-  padding: 6px 12px; border-radius: 999px; cursor: pointer;
+  border: 0; background: none; color: var(--muted); font: inherit; font-weight: 600; font-size: .9rem;
+  padding: 6px 12px; border-radius: 999px; cursor: pointer; transition: background .15s, color .15s;
 }
 .scope button.on { background: var(--accent); color: #fff; }
-.search { position: relative; margin-top: 10px; }
-.search input {
-  width: 100%; font: inherit; font-size: 1.4rem; line-height: 1.3;
-  padding: 14px 52px 14px 16px;
-  border: 2px solid var(--line); border-radius: 14px;
-  background: var(--card); color: var(--text);
+
+/* ---------- 搜尋框 ---------- */
+.search { position: relative; margin-top: 12px; }
+.search-icon {
+  position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
+  color: var(--muted); font-size: 1.25rem; pointer-events: none;
 }
-.search input:focus { outline: none; border-color: var(--accent); }
+.search input {
+  width: 100%; font: inherit; font-size: 1.35rem; font-weight: 500; line-height: 1.3;
+  padding: 13px 50px 13px 42px;
+  border: 2px solid var(--line); border-radius: var(--radius);
+  background: var(--card); color: var(--text);
+  box-shadow: var(--shadow);
+  transition: border-color .15s, box-shadow .15s;
+}
+.search input:focus { outline: none; border-color: var(--accent); box-shadow: var(--shadow-lg); }
 .search input::-webkit-search-cancel-button { display: none; }
 #clear {
   position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
-  border: 0; background: none; color: var(--muted); font-size: 1.3rem; padding: 8px 12px; cursor: pointer;
+  border: 0; background: none; color: var(--muted); font-size: 1.2rem; padding: 8px 12px; cursor: pointer;
+  border-radius: 999px;
 }
+#clear:active { background: var(--line-soft); }
+
 .suggest {
-  position: absolute; left: 0; right: 0; top: calc(100% + 4px); z-index: 10;
-  list-style: none; margin: 0; padding: 4px 0;
+  position: absolute; left: 0; right: 0; top: calc(100% + 6px); z-index: 10;
+  list-style: none; margin: 0; padding: 6px 0;
   max-height: 60vh; overflow-y: auto;
-  background: var(--card); border: 1px solid var(--line); border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, .18);
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
 }
 .suggest li {
   display: flex; align-items: baseline; gap: 10px;
-  padding: 11px 14px; font-size: 1.1rem; cursor: pointer;
-  border-bottom: 1px solid var(--line);
+  padding: 12px 16px; font-size: 1.08rem; cursor: pointer;
+  border-bottom: 1px solid var(--line-soft);
 }
 .suggest li:last-child { border-bottom: 0; }
 .suggest li.active, .suggest li:hover { background: var(--accent-soft); }
-.suggest .s-code { flex: none; font: 600 1.1rem ui-monospace, "SF Mono", Menlo, Consolas, monospace; color: var(--accent); }
+.suggest .s-code { flex: none; font: 700 1.05rem/1 "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace; color: var(--accent); }
 .suggest .s-name { flex: 1; min-width: 0; overflow-wrap: anywhere; }
-.suggest .s-tag { flex: none; font-size: .75rem; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 0 6px; }
-.suggest .s-more { justify-content: center; color: var(--muted); font-size: .9rem; cursor: default; }
-.cats { display: flex; gap: 6px; overflow-x: auto; padding: 8px 0 2px; scrollbar-width: none; }
+.suggest .s-tag { flex: none; font-size: .72rem; font-weight: 600; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 1px 7px; }
+.suggest .s-more { justify-content: center; color: var(--muted); font-size: .88rem; cursor: default; }
+
+/* ---------- 大分類（手術／處置／檢查／檢驗） ---------- */
+.groups { display: flex; gap: 8px; overflow-x: auto; padding: 12px 0 0; scrollbar-width: none; }
+.groups::-webkit-scrollbar { display: none; }
+.groups[hidden] { display: none; }
+.groups button {
+  flex: none; display: flex; align-items: center; gap: 5px;
+  border: 1.5px solid var(--line); background: var(--card); color: var(--text);
+  font: inherit; font-weight: 600; font-size: .92rem; padding: 6px 14px 6px 11px;
+  border-radius: 999px; cursor: pointer; transition: transform .1s, box-shadow .15s;
+}
+.groups button:active { transform: scale(.96); }
+.groups button.grp-surgery.on { background: var(--c-surgery-soft); border-color: var(--c-surgery); color: var(--c-surgery); box-shadow: var(--shadow); }
+.groups button.grp-procedure.on { background: var(--c-procedure-soft); border-color: var(--c-procedure); color: var(--c-procedure); box-shadow: var(--shadow); }
+.groups button.grp-exam.on { background: var(--c-exam-soft); border-color: var(--c-exam); color: var(--c-exam); box-shadow: var(--shadow); }
+.groups button.grp-lab.on { background: var(--c-lab-soft); border-color: var(--c-lab); color: var(--c-lab); box-shadow: var(--shadow); }
+.groups button.grp-any.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-2); box-shadow: var(--shadow); }
+
+/* ---------- 子分類 ---------- */
+.cats { display: flex; gap: 6px; overflow-x: auto; padding: 9px 0 1px; scrollbar-width: none; }
 .cats::-webkit-scrollbar { display: none; }
+.cats[hidden] { display: none; }
 .cats button {
-  flex: none; border: 1px solid var(--line); background: var(--card); color: var(--text);
-  font: inherit; font-size: .9rem; padding: 5px 12px; border-radius: 999px; cursor: pointer;
+  flex: none; border: 1px solid var(--line); background: var(--card); color: var(--muted);
+  font: inherit; font-size: .84rem; font-weight: 500; padding: 4px 11px; border-radius: 999px; cursor: pointer;
 }
-.cats button.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 600; }
-main { padding: 4px 16px 16px; max-width: 860px; margin: 0 auto; }
-.status { color: var(--muted); font-size: .85rem; margin: 6px 0; }
-.list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.cats button.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-2); font-weight: 700; }
+
+/* ---------- 內容 ---------- */
+main { padding: 6px 16px 16px; max-width: 860px; margin: 0 auto; }
+.status { color: var(--muted); font-size: .85rem; font-weight: 500; margin: 10px 2px 8px; }
+.list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+
 .item {
-  background: var(--card); border: 1px solid var(--line); border-radius: 10px;
-  padding: 10px 12px;
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 12px 14px; box-shadow: var(--shadow);
+  border-left: 4px solid var(--line);
+  transition: box-shadow .15s;
 }
+.item-surgery { border-left-color: var(--c-surgery); }
+.item-procedure { border-left-color: var(--c-procedure); }
+.item-exam { border-left-color: var(--c-exam); }
+.item-lab { border-left-color: var(--c-lab); }
+
 .row1 { display: flex; align-items: flex-start; gap: 10px; }
 .code {
-  flex: none; font: 600 1.1rem/1.4 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  flex: none; font: 700 1.08rem/1.35 "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   color: var(--accent); background: var(--accent-soft);
-  border: 0; border-radius: 6px; padding: 2px 7px; cursor: pointer;
+  border: 0; border-radius: 8px; padding: 3px 8px; cursor: pointer; letter-spacing: .01em;
 }
-.name { flex: 1; min-width: 0; font-weight: 500; font-size: 1.05rem; overflow-wrap: anywhere; }
-.star { flex: none; border: 0; background: none; font-size: 1.15rem; line-height: 1; color: var(--line); cursor: pointer; padding: 2px; }
+.code:active { transform: scale(.96); }
+.name { flex: 1; min-width: 0; font-weight: 600; font-size: 1.06rem; overflow-wrap: anywhere; padding-top: 2px; }
+.star { flex: none; border: 0; background: none; font-size: 1.25rem; line-height: 1; color: var(--line); cursor: pointer; padding: 2px; }
 .star.on { color: var(--star); }
-.sub { margin-top: 4px; font-size: .8rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 10px; }
-.tag { color: var(--accent); }
-.alias { overflow-wrap: anywhere; }
-details { margin-top: 6px; font-size: .85rem; }
-summary { cursor: pointer; color: var(--muted); }
-details p { margin: 6px 0 0; white-space: pre-line; overflow-wrap: anywhere; }
-mark { background: var(--mark); color: inherit; border-radius: 2px; }
+
+.sub { margin-top: 6px; font-size: .82rem; color: var(--muted); display: flex; flex-wrap: wrap; align-items: center; gap: 5px 8px; }
+.tag {
+  display: inline-flex; align-items: center; gap: 3px; font-weight: 700; font-size: .74rem;
+  padding: 2px 8px; border-radius: 999px; letter-spacing: .01em;
+}
+.tag.cat { background: var(--line-soft); color: var(--muted); font-weight: 600; }
+.tag.grp-surgery { background: var(--c-surgery-soft); color: var(--c-surgery); }
+.tag.grp-procedure { background: var(--c-procedure-soft); color: var(--c-procedure); }
+.tag.grp-exam { background: var(--c-exam-soft); color: var(--c-exam); }
+.tag.grp-lab { background: var(--c-lab-soft); color: var(--c-lab); }
+.alias { overflow-wrap: anywhere; color: var(--muted); }
+
+/* ---------- 申報提醒 ---------- */
+.tip {
+  margin-top: 9px; padding: 9px 12px; border-radius: 10px;
+  background: var(--c-lab-soft); border: 1px solid var(--c-lab);
+  border: 1px solid color-mix(in srgb, var(--c-lab) 35%, transparent);
+  font-size: .87rem; line-height: 1.55;
+}
+.tip-head { margin: 0 0 3px; font-weight: 700; color: var(--c-lab); font-size: .82rem; }
+.tip p { margin: 0 0 3px; overflow-wrap: anywhere; }
+.tip p:last-child { margin-bottom: 0; }
+.tip-disclaimer { color: var(--muted); font-size: .76rem; font-weight: 500; }
+
+details { margin-top: 8px; font-size: .87rem; }
+summary { cursor: pointer; color: var(--muted); font-weight: 600; list-style: none; display: flex; align-items: center; gap: 4px; }
+summary::-webkit-details-marker { display: none; }
+summary::before { content: '▸'; font-size: .8em; transition: transform .15s; }
+details[open] summary::before { transform: rotate(90deg); }
+details p { margin: 7px 0 0; white-space: pre-line; overflow-wrap: anywhere; color: var(--text); }
+
+mark { background: var(--mark); color: #241c00; border-radius: 3px; padding: 0 1px; }
+@media (prefers-color-scheme: dark) { mark { color: #1b1400; } }
+
 .more {
-  display: block; margin: 12px auto; font: inherit; border: 1px solid var(--line);
-  background: var(--card); color: var(--accent); border-radius: 8px; padding: 8px 18px; cursor: pointer;
+  display: block; margin: 14px auto; font: inherit; font-weight: 600; border: 1px solid var(--line);
+  background: var(--card); color: var(--accent); border-radius: 999px; padding: 9px 22px; cursor: pointer;
+  box-shadow: var(--shadow);
 }
 .more[hidden] { display: none; }
-.empty { text-align: center; color: var(--muted); padding: 32px 0; }
-.foot { color: var(--muted); font-size: .78rem; text-align: center; padding: 8px 16px calc(24px + env(safe-area-inset-bottom)); }
-.foot a { color: var(--accent); }
+.empty { text-align: center; color: var(--muted); padding: 40px 0; font-size: .95rem; }
+
+.foot { color: var(--muted); font-size: .78rem; text-align: center; padding: 10px 16px calc(24px + env(safe-area-inset-bottom)); }
+.foot a { color: var(--accent); font-weight: 600; }
 .foot p { margin: 4px 0; }
+.foot-warn { color: var(--c-lab); max-width: 520px; margin-left: auto; margin-right: auto; }
+
 .toast {
   position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom)); transform: translateX(-50%);
-  background: var(--text); color: var(--bg); padding: 8px 16px; border-radius: 8px; font-size: .9rem;
+  background: var(--text); color: var(--bg); padding: 9px 18px; border-radius: 999px; font-size: .9rem;
+  font-weight: 600; box-shadow: var(--shadow-lg);
   opacity: 0; pointer-events: none; transition: opacity .2s;
 }
-.toast.show { opacity: .92; }
+.toast.show { opacity: .95; }

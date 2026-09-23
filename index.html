@@ -15,7 +15,7 @@
 <body>
   <header class="top">
     <div class="title-row">
-      <h1>健保碼快查</h1>
+      <h1><span class="logo" aria-hidden="true">🩺</span>健保碼快查</h1>
       <div class="scope" role="tablist" aria-label="查詢範圍">
         <button type="button" data-scope="uro" class="on" role="tab">泌尿科</button>
         <button type="button" data-scope="all" role="tab">全部</button>
@@ -23,12 +23,14 @@
       </div>
     </div>
     <div class="search">
+      <span class="search-icon" aria-hidden="true">⌕</span>
       <input id="q" type="search" autocomplete="off" autocapitalize="off" spellcheck="false"
              enterkeyhint="search" role="combobox" aria-autocomplete="list" aria-controls="suggest"
              aria-expanded="false" placeholder="代碼、中文或縮寫：770、膀胱、TURP">
       <button type="button" id="clear" aria-label="清除">✕</button>
       <ul id="suggest" class="suggest" role="listbox" hidden></ul>
     </div>
+    <div id="groups" class="groups" aria-label="手術或處置"></div>
     <div id="cats" class="cats" aria-label="分類"></div>
   </header>
 
@@ -42,6 +44,7 @@
     <p id="meta"></p>
     <p>點代碼即可複製。支付點數與最新規範請以
       <a href="https://info.nhi.gov.tw/INAE5000/INAE5001S01" target="_blank" rel="noopener">健保署官方查詢</a>為準。</p>
+    <p class="foot-warn">標示「⚠ 申報提醒」的內容為整理者自行歸納的常見限制，<b>不是</b>健保署逐字公告，請務必自行核對最新公告與院內規定。</p>
   </footer>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
