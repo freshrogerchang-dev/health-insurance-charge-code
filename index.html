@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>健保碼快查</title>
+  <meta name="description" content="泌尿科健保處置與手術碼離線快速查詢">
+  <meta name="theme-color" content="#0f6e6e">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="title-row">
+      <h1>健保碼快查</h1>
+      <div class="scope" role="tablist" aria-label="查詢範圍">
+        <button type="button" data-scope="uro" class="on" role="tab">泌尿科</button>
+        <button type="button" data-scope="all" role="tab">全部</button>
+        <button type="button" data-scope="fav" role="tab">★ 常用</button>
+      </div>
+    </div>
+    <div class="search">
+      <input id="q" type="search" autocomplete="off" autocapitalize="off" spellcheck="false"
+             placeholder="輸入代碼、中文、英文縮寫（如 TURP、DJ、膀胱鏡）">
+      <button type="button" id="clear" aria-label="清除">✕</button>
+    </div>
+    <div id="cats" class="cats" aria-label="分類"></div>
+  </header>
+
+  <main>
+    <p id="status" class="status"></p>
+    <ul id="list" class="list"></ul>
+    <button type="button" id="more" class="more" hidden>顯示更多</button>
+  </main>
+
+  <footer class="foot">
+    <p id="meta"></p>
+    <p>點代碼即可複製。支付點數與最新規範請以
+      <a href="https://info.nhi.gov.tw/INAE5000/INAE5001S01" target="_blank" rel="noopener">健保署官方查詢</a>為準。</p>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="data/urology.js"></script>
+  <script src="data/all-codes.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
