@@ -590,6 +590,30 @@ POINTS = {
     "75624C": 22239,
 }
 
+# ---------------------------------------------------------------------------
+# 院內碼（使用者提供之院內「達文西自費組套」對照表，113年9月更新）
+# 這是「該院」達文西機器人手術自費組套的內部代碼，不是全國通用的院內碼，
+# 不同醫院編碼方式都不同。只先收錄這張表上明確寫出來的對應，其餘代碼請在
+# App 內用 ✎ 自行輸入貴院代碼（會存在使用者自己的瀏覽器裡）。
+# 79417B 的院內碼 735843 是表上特別標明的例外（其餘多為「7」+ 代碼五碼
+# 數字），不要套用公式去推測其他代碼。
+# ---------------------------------------------------------------------------
+HOSPITAL_CODES = {
+    "76037B": "776037",
+    "76030B": "776030",
+    "78051B": "778051",
+    "78050B": "778050",
+    "75616B": "775616",
+    "75617C": "775617",
+    "75618B": "775618",
+    "75619C": "775619",
+    "75621C": "775621",
+    "75622C": "775622",
+    "75623C": "775623",
+    "75624C": "775624",
+    "79417B": "735843",
+}
+
 # 常見別名群組（這些字彼此視為同義，搜尋其一也會找到另一個）
 SYNONYMS = [
     ["攝護腺", "前列腺", "prostate"],
@@ -646,7 +670,8 @@ def main():
             uro.append({"code": code_, "name": name, "cat": cat, "group": group,
                         "alias": ALIASES.get(code_, ""), "note": note,
                         "tip": TIPS.get(code_, ""),
-                        "points": POINTS.get(code_)})
+                        "points": POINTS.get(code_),
+                        "hcode": HOSPITAL_CODES.get(code_, "")})
     missing = sorted(set(ALIASES) - seen)
     if missing:
         print("警告：以下別名代碼未被分類收錄：", missing)
@@ -669,11 +694,12 @@ def main():
               newline="") as f:
         w = csv.writer(f)
         w.writerow(["大分類", "分類", "代碼", "中文名稱", "支付點數(115.09.01)",
-                    "常用別名/縮寫", "常見申報提醒(非官方)", "支付規範摘要"])
+                    "院內碼(達文西自費組套)", "常用別名/縮寫",
+                    "常見申報提醒(非官方)", "支付規範摘要"])
         for it in uro:
             w.writerow([it["group"], it["cat"], it["code"], it["name"],
                         it["points"] if it["points"] is not None else "",
-                        it["alias"], re.sub(r"\s+", " ", it["tip"]),
+                        it["hcode"], it["alias"], re.sub(r"\s+", " ", it["tip"]),
                         re.sub(r"\s+", " ", it["note"])])
 
     n_points = sum(1 for it in uro if it["points"] is not None)
@@ -688,6 +714,9 @@ def main():
         "- 「常見申報提醒」為整理者自行歸納，**不是健保署逐字公告**，僅供提醒"
         "查核之用；標示【通則五】【通則六】的則是直接引用支付標準通則原文，"
         "可作為申報依據，其餘仍請以當年度公告及院內審查為準。",
+        f"- 「院內碼」目前只收錄 {len(HOSPITAL_CODES)} 項使用者提供之「達文西自費"
+        "組套」對照表內的代碼，**是特定醫院的內部編碼，不是全國通用代碼**；"
+        "其餘代碼可在 App 內自行輸入貴院代碼（存在瀏覽器本機，不會上傳）。",
         "- 本檔由 `scripts/build_data.py` 自動產生，請勿手動編輯。", "",
     ]
     for group in GROUPS:
@@ -701,18 +730,20 @@ def main():
             if not items:
                 continue
             lines += [f"## {cat}（{len(items)}）", "",
-                      "| 代碼 | 名稱 | 支付點數 | 常用別名/縮寫 | 常見申報提醒 |",
-                      "|---|---|---|---|---|"]
+                      "| 代碼 | 名稱 | 支付點數 | 院內碼 | 常用別名/縮寫 | 常見申報提醒 |",
+                      "|---|---|---|---|---|---|"]
             esc = lambda s: s.replace("|", "／")
             for it in items:
                 pts = it["points"] if it["points"] is not None else "—"
-                lines.append(f"| `{it['code']}` | {esc(it['name'])} | {pts} | "
+                hc = it["hcode"] or "—"
+                lines.append(f"| `{it['code']}` | {esc(it['name'])} | {pts} | {hc} | "
                               f"{esc(it['alias'])} | {esc(it['tip'])} |")
             lines.append("")
     (ROOT / "docs" / "泌尿科健保碼整理.md").write_text("\n".join(lines),
                                                    encoding="utf-8")
     print(f"完成：全部 {len(codes)} 項，泌尿科 {len(uro)} 項，"
-          f"提醒 {sum(1 for it in uro if it['tip'])} 項，點數 {n_points} 項")
+          f"提醒 {sum(1 for it in uro if it['tip'])} 項，點數 {n_points} 項，"
+          f"院內碼 {len(HOSPITAL_CODES)} 項")
 
 
 if __name__ == "__main__":

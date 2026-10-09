@@ -43,11 +43,12 @@
 
   // ---------- 建立索引 ----------
   var uroByCode = {};
-  function makeItem(code, name, note, cat, alias, group, tip, points) {
+  function makeItem(code, name, note, cat, alias, group, tip, points, hcode) {
     var it = {
       code: code, name: name, note: note || '', cat: cat || '',
       alias: alias || '', group: group || '', tip: tip || '',
-      points: (typeof points === 'number') ? points : null
+      points: (typeof points === 'number') ? points : null,
+      hcode: hcode || ''
     };
     it.kCode = code.toLowerCase();
     it.kName = canon(name);
@@ -58,7 +59,7 @@
     return it;
   }
   var uroItems = URO.items.map(function (u) {
-    var it = makeItem(u.code, u.name, u.note, u.cat, u.alias, u.group, u.tip, u.points);
+    var it = makeItem(u.code, u.name, u.note, u.cat, u.alias, u.group, u.tip, u.points, u.hcode);
     uroByCode[u.code] = it;
     return it;
   });
@@ -89,6 +90,8 @@
 
   function scoreToken(it, tok, raw) {
     if (it.kCode.indexOf(raw) === 0) return 1000 - it.kCode.length;
+    var hc = effHcode(it);
+    if (raw.length >= 3 && hc && hc.toLowerCase().indexOf(raw) === 0) return 950 - hc.length;
     var w = it.kAliasWords.indexOf(tok);
     if (w !== -1) return 600 - Math.min(w, 20);
     var p = it.kName.indexOf(tok);
@@ -149,6 +152,13 @@
       catsEl = $('cats'), groupsEl = $('groups');
   var state = { scope: load('scope', 'uro'), group: '', cat: '', shown: PAGE, results: [] };
   var favs = load('favs', []);
+  // 院內碼：資料檔內建少數幾個（使用者提供的達文西自費組套對照表），
+  // 其餘由使用者自行輸入、存在這台裝置的瀏覽器裡（不會上傳、不會同步）。
+  var hcodes = load('hcodes', {});
+  function effHcode(it) {
+    var o = hcodes[it.code];
+    return (o !== undefined) ? o : it.hcode;
+  }
 
   function esc(s) {
     return String(s).replace(/[&<>"]/g, function (c) {
@@ -309,6 +319,10 @@
         if (it.group) sub += '<span class="tag grp-' + slug + '">' + GROUP_ICON[it.group] + ' ' + esc(it.group) + '</span>';
         if (it.cat) sub += '<span class="tag cat">' + esc(it.cat) + '</span>';
         if (it.points != null) sub += '<span class="tag pts" title="115.09.01 生效版支付點數">💰 ' + it.points + ' 點</span>';
+        var hc = effHcode(it);
+        sub += hc
+          ? '<button type="button" class="tag hcode" data-hedit="' + esc(it.code) + '" title="點一下可編輯院內碼">🏥 ' + highlight(hc, raws) + ' ✎</button>'
+          : '<button type="button" class="tag hcode add" data-hedit="' + esc(it.code) + '">➕ 院內碼</button>';
         if (it.alias) sub += '<span class="alias">' + highlight(it.alias, raws) + '</span>';
         var tip = it.tip ? '<div class="tip"><p class="tip-head">⚠ 申報提醒</p><p>' +
           highlight(it.tip, raws) + '</p><p class="tip-disclaimer">此提醒為整理者歸納，非健保署逐字' +
@@ -401,6 +415,20 @@
       if (i === -1) favs.push(code); else favs.splice(i, 1);
       save('favs', favs);
       if (state.scope === 'fav') run(); else render();
+      return;
+    }
+    var h = e.target.closest('[data-hedit]');
+    if (h) {
+      var hcode = h.getAttribute('data-hedit');
+      var it = uroByCode[hcode] || getAll().filter(function (x) { return x.code === hcode; })[0];
+      var cur = it ? effHcode(it) : '';
+      var label = it ? (it.code + ' ' + it.name) : hcode;
+      var v = window.prompt('輸入「' + label + '」的院內碼（貴院內部代碼，留空並確定可清除）：', cur || '');
+      if (v === null) return;
+      v = v.trim();
+      if (v) hcodes[hcode] = v; else delete hcodes[hcode];
+      save('hcodes', hcodes);
+      render();
     }
   });
   moreEl.addEventListener('click', function () { state.shown += PAGE; render(); });
